@@ -243,7 +243,7 @@ GameObject:
   - component: {fileID: 949583023}
   - component: {fileID: 949583022}
   m_Layer: 0
-  m_Name: Particle System
+  m_Name: PS_AvadaKadavra
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -377,7 +377,7 @@ ParticleSystem:
   moveWithTransform: 1
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 1
-  randomSeed: -1031399158
+  randomSeed: 1542216608
   InitialModule:
     serializedVersion: 3
     enabled: 1
@@ -3837,9 +3837,9 @@ TrailRenderer:
       ctime6: 0
       ctime7: 0
       atime0: 0
-      atime1: 7903
-      atime2: 30069
-      atime3: 65535
+      atime1: 20239
+      atime2: 28913
+      atime3: 53199
       atime4: 0
       atime5: 0
       atime6: 0
