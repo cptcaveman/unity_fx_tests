@@ -1,0 +1,20 @@
+Spells
+ - Avada Kedavra
+ - Confringo (fire ball)
+ - Lumos Maxima
+ - Expeliarmus
+ - Arania Eximae
+ - Expecto Patronum
+ - Mordre (Death Eater bat signal spell)
+ - Stupefy
+ - Incendio
+ - 
+
+ Art
+  - Dementor
+		Done
+  - Snake
+
+ Code
+  - Tool that combines textures into one. Specify Textures to use for RGBA channels
+  		Done (Can do this in Photoshop)
