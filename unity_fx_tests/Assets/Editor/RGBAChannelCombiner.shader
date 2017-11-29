@@ -5,7 +5,7 @@
 		_MainTex ("Tex for R Channel", 2D) = "black" {}
 		_TexG("Tex for G Channel", 2D) = "black" {}
 		_TexB("Tex for B Channel", 2D) = "black" {}
-		_TexA("Tex for A Channel", 2D) = "black" {}
+		_TexA("Tex for A Channel", 2D) = "white" {}
 	}
 	SubShader
 	{
