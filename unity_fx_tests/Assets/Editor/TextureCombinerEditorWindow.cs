@@ -89,6 +89,10 @@ public class TextureCombinerWindow : EditorWindow
             m_prevMadeTexture = new Texture2D(m_texR.width, m_texR.height);
             m_prevMadeTexture.ReadPixels(new Rect(0, 0, m_prevMadeTexture.width, m_prevMadeTexture.height), 0, 0);
             m_prevMadeTexture.Apply();
+            
+            RenderTexture.active = null;
+            rt.Release();
+
             byte[] bytes = m_prevMadeTexture.EncodeToPNG();
 
             using (System.IO.FileStream fs = new System.IO.FileStream(Application.dataPath + "/New RGBA Channel Texture.png", System.IO.FileMode.Create))
@@ -102,6 +106,10 @@ public class TextureCombinerWindow : EditorWindow
         if(m_prevMadeTexture)
         {
             // draw texture to the right
+            m_textureRect.x += m_textureSize + padding;
+            m_textureRect.width = m_textureRect.height = m_textureSize * 5;
+            m_textureRect.y = this.position.height / 2 - m_textureRect.height / 2;
+            GUI.DrawTexture(m_textureRect, m_prevMadeTexture, ScaleMode.ScaleToFit);
         }
     }
 
