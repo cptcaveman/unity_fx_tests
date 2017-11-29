@@ -26,6 +26,7 @@ public class TextureCombinerWindow : EditorWindow
 
     private void OnEnable()
     {
+        if (m_rgbaMat) Debug.Log("asd");
         m_rgbaMat = new Material(Shader.Find("Hidden/RGBAChannelCombiner"));
         m_prevMadeTexture = null;
     }
@@ -115,6 +116,6 @@ public class TextureCombinerWindow : EditorWindow
 
     private void OnDisable()
     {
-        Debug.Log("asdfasdf");
+        
     }
 }
