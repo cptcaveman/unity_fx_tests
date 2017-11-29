@@ -48,9 +48,9 @@
 			fixed4 frag (v2f i) : SV_Target
 			{
 				fixed r = tex2D(_MainTex, i.uv).r;
-				fixed g = tex2D(_TexG, i.uv).g;
-				fixed b = tex2D(_TexB, i.uv).b;
-				fixed a = tex2D(_TexA, i.uv).a;
+				fixed g = tex2D(_TexG, i.uv).r;
+				fixed b = tex2D(_TexB, i.uv).r;
+				fixed a = tex2D(_TexA, i.uv).r;
 				
 				return fixed4(r, g, b, a);
 			}

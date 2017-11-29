@@ -52,7 +52,7 @@ public class TextureCombinerWindow : EditorWindow
         m_labelRect.height = m_labelHeight * 2;
         m_labelRect.width = m_textureSize * 5;
 
-        EditorGUI.HelpBox(m_labelRect, "Please ensure the textures are of the same dimensions", MessageType.Info);
+        EditorGUI.HelpBox(m_labelRect, "Please ensure the textures are grayscale and of the same dimensions", MessageType.Info);
 
         y += m_labelRect.height;
 
