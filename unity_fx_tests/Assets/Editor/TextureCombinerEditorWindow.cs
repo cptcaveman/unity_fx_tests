@@ -26,9 +26,11 @@ public class TextureCombinerWindow : EditorWindow
 
     private void OnEnable()
     {
-        if (m_rgbaMat) Debug.Log("asd");
-        m_rgbaMat = new Material(Shader.Find("Hidden/RGBAChannelCombiner"));
-        m_prevMadeTexture = null;
+        if (!m_rgbaMat)
+        {
+            m_rgbaMat = new Material(Shader.Find("Hidden/RGBAChannelCombiner"));
+            m_prevMadeTexture = null;
+        }
     }
 
     private void DrawTextureField(string label, ref Texture2D tex, float x, float y)
@@ -48,17 +50,20 @@ public class TextureCombinerWindow : EditorWindow
         float y = padding;
 
         // set up default dimensions and positions of rects
+        m_labelRect.x = padding;
         m_labelRect.y = y;
         m_labelRect.height = m_labelHeight * 2;
         m_labelRect.width = m_textureSize * 5;
 
-        EditorGUI.HelpBox(m_labelRect, "Please ensure the textures are grayscale and of the same dimensions", MessageType.Info);
-
+        EditorGUI.HelpBox(m_labelRect, "NOTE: Only the R channel from each texture is sampled so make sure you submit grayscale textures as input", MessageType.Info);
+        
         y += m_labelRect.height;
 
         m_labelRect.height = m_labelHeight;
         m_labelRect.width = m_textureRect.width = m_textureRect.height = m_textureSize;
 
+        EditorGUI.BeginChangeCheck();
+        
         DrawTextureField("R Channel:", ref m_texR, padding, y);
         y += m_labelHeight + m_textureSize;
 
@@ -70,14 +75,14 @@ public class TextureCombinerWindow : EditorWindow
 
         DrawTextureField("A Channel:", ref m_texA, padding, y);
         y += m_labelHeight + m_textureSize;
-
-        m_labelRect.y = this.position.height - padding * 2;
-        m_labelRect.width *= 2;
         
-        if (GUI.Button(m_labelRect, "Combine Textures"))
+        if (EditorGUI.EndChangeCheck())
         {
+            int width = m_texR ? m_texR.width : m_textureSize;
+            int height = m_texR ? m_texR.height : m_textureSize;
+
             // Combine Textures
-            RenderTexture rt = new RenderTexture(m_texR.width, m_texR.height, 0, RenderTextureFormat.Default, RenderTextureReadWrite.Default);
+            RenderTexture rt = new RenderTexture(width, height, 0, RenderTextureFormat.Default, RenderTextureReadWrite.Default);
 
             m_rgbaMat.SetTexture("_TexG", m_texG);
             m_rgbaMat.SetTexture("_TexB", m_texB);
@@ -93,15 +98,6 @@ public class TextureCombinerWindow : EditorWindow
             
             RenderTexture.active = null;
             rt.Release();
-
-            byte[] bytes = m_prevMadeTexture.EncodeToPNG();
-
-            using (System.IO.FileStream fs = new System.IO.FileStream(Application.dataPath + "/New RGBA Channel Texture.png", System.IO.FileMode.Create))
-            {
-                fs.Write(bytes, 0, bytes.Length);
-            }
-
-            AssetDatabase.Refresh();
         }
 
         if(m_prevMadeTexture)
@@ -110,7 +106,28 @@ public class TextureCombinerWindow : EditorWindow
             m_textureRect.x += m_textureSize + padding;
             m_textureRect.width = m_textureRect.height = m_textureSize * 5;
             m_textureRect.y = this.position.height / 2 - m_textureRect.height / 2;
+            GUI.Box(m_textureRect, Texture2D.blackTexture);
             GUI.DrawTexture(m_textureRect, m_prevMadeTexture, ScaleMode.ScaleToFit);
+
+            m_labelRect.y = this.position.height - padding * 2;
+            m_labelRect.width *= 2;
+            
+            if(GUI.Button(m_labelRect, "Save Texture"))
+            {
+                string path = EditorUtility.SaveFilePanel("Save file as", Application.dataPath, "New RGB Channel Texture", "png");
+
+                if(path != null && path.Length > 0)
+                {
+                    byte[] bytes = m_prevMadeTexture.EncodeToPNG();
+
+                    using (System.IO.FileStream fs = new System.IO.FileStream(path, System.IO.FileMode.OpenOrCreate))
+                    {
+                        fs.Write(bytes, 0, bytes.Length);
+                    }
+
+                    AssetDatabase.Refresh();
+                }
+            }
         }
     }
 
