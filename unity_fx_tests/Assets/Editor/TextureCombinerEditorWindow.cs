@@ -29,7 +29,7 @@ public class TextureCombinerWindow : EditorWindow
         if (!m_rgbaMat)
         {
             m_rgbaMat = new Material(Shader.Find("Hidden/RGBAChannelCombiner"));
-            m_prevMadeTexture = null;
+            m_prevMadeTexture = Texture2D.blackTexture;
         }
     }
 
@@ -75,14 +75,27 @@ public class TextureCombinerWindow : EditorWindow
 
         DrawTextureField("A Channel:", ref m_texA, padding, y);
         y += m_labelHeight + m_textureSize;
-        
-        if (EditorGUI.EndChangeCheck())
+
+        bool hasTexture = (m_texR || m_texG || m_texB || m_texA);
+
+        if ( EditorGUI.EndChangeCheck() && hasTexture )
         {
-            int width = m_texR ? m_texR.width : m_textureSize;
-            int height = m_texR ? m_texR.height : m_textureSize;
+            // get max width
+            int width = m_textureSize;
+            if (m_texR && width < m_texR.width) width = m_texR.width;
+            if (m_texG && width < m_texG.width) width = m_texG.width;
+            if (m_texB && width < m_texB.width) width = m_texB.width;
+            if (m_texA && width < m_texA.width) width = m_texA.width;
+
+            // get max height
+            int height = m_textureSize;
+            if (m_texR && height < m_texR.height) height = m_texR.height;
+            if (m_texG && height < m_texG.height) height = m_texG.height;
+            if (m_texB && height < m_texB.height) height = m_texB.height;
+            if (m_texA && height < m_texA.height) height = m_texA.height;
 
             // Combine Textures
-            RenderTexture rt = new RenderTexture(width, height, 0, RenderTextureFormat.Default, RenderTextureReadWrite.Default);
+            RenderTexture rt = RenderTexture.GetTemporary(width, height, 0, RenderTextureFormat.Default, RenderTextureReadWrite.Default);
 
             m_rgbaMat.SetTexture("_TexG", m_texG);
             m_rgbaMat.SetTexture("_TexB", m_texB);
@@ -92,27 +105,29 @@ public class TextureCombinerWindow : EditorWindow
 
             RenderTexture.active = rt;
 
-            m_prevMadeTexture = new Texture2D(m_texR.width, m_texR.height);
+            m_prevMadeTexture = new Texture2D(width, height);
             m_prevMadeTexture.ReadPixels(new Rect(0, 0, m_prevMadeTexture.width, m_prevMadeTexture.height), 0, 0);
             m_prevMadeTexture.Apply();
             
             RenderTexture.active = null;
-            rt.Release();
+            RenderTexture.ReleaseTemporary(rt);
         }
 
-        if(m_prevMadeTexture)
+        // draw texture to the right
+        m_textureRect.x += m_textureSize + padding;
+        m_textureRect.width = m_textureRect.height = m_textureSize * 5;
+        m_textureRect.y = this.position.height / 2 - m_textureRect.height / 2;
+        GUI.Box(m_textureRect, "");
+
+        if ( m_prevMadeTexture && hasTexture )
         {
-            // draw texture to the right
-            m_textureRect.x += m_textureSize + padding;
-            m_textureRect.width = m_textureRect.height = m_textureSize * 5;
-            m_textureRect.y = this.position.height / 2 - m_textureRect.height / 2;
-            GUI.Box(m_textureRect, Texture2D.blackTexture);
             GUI.DrawTexture(m_textureRect, m_prevMadeTexture, ScaleMode.ScaleToFit);
 
             m_labelRect.y = this.position.height - padding * 2;
             m_labelRect.width *= 2;
-            
-            if(GUI.Button(m_labelRect, "Save Texture"))
+            m_labelRect.x = this.position.width - padding - m_labelRect.width;
+
+            if (GUI.Button(m_labelRect, "Save Texture"))
             {
                 string path = EditorUtility.SaveFilePanel("Save file as", Application.dataPath, "New RGB Channel Texture", "png");
 
@@ -120,7 +135,7 @@ public class TextureCombinerWindow : EditorWindow
                 {
                     byte[] bytes = m_prevMadeTexture.EncodeToPNG();
 
-                    using (System.IO.FileStream fs = new System.IO.FileStream(path, System.IO.FileMode.OpenOrCreate))
+                    using (System.IO.FileStream fs = new System.IO.FileStream(path, System.IO.FileMode.Create))
                     {
                         fs.Write(bytes, 0, bytes.Length);
                     }

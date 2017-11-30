@@ -225,9 +225,9 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Assets\Scripts\ShootSpell.cs" />
     <Compile Include="Assets\Scripts\Spell.cs" />
     <Compile Include="Assets\Scripts\SpellData.cs" />
-    <Compile Include="Assets\ShootSpell.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\Editor\RGBAChannelCombiner.shader" />
