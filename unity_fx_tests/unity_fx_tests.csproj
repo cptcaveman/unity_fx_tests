@@ -232,6 +232,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\Editor\RGBAChannelCombiner.shader" />
+    <None Include="Assets\Shaders\NewSurfaceShader.shader" />
     <None Include="Assets\Shaders\NoiseGradientShader.shader" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

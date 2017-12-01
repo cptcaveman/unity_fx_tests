@@ -8,12 +8,12 @@
 	}
 	SubShader
 	{
-		Tags { "RenderType" = "Transparent" }
+		Tags{ "RenderType" = "Opaque" }
 		LOD 200
 
 		CGPROGRAM
 		// Physically based Standard lighting model, and enable shadows on all light types
-		#pragma surface surf Standard alpha
+		#pragma surface surf Standard
 
 		// Use shader model 3.0 target, to get nicer looking lighting
 		#pragma target 3.0
@@ -41,8 +41,8 @@
 			float2 timeOffset = float2(_Time.x, _Time.x);
 			fixed2 noiseOffset = tex2D(_DistortionTex, IN.uv_MainTex + timeOffset).xy - .5 * 2;
 			fixed4 c = tex2D(_MainTex, IN.uv_MainTex + noiseOffset * gradientMask * _DistortionStrength) * _Color;
+			clip(c.a - .001);
 			o.Albedo = c.rgb;
-			o.Alpha = c.a;
 		}
 		ENDCG
 	}
